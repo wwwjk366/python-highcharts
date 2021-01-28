@@ -22,17 +22,17 @@ class BaseOptions(object):
         return self.__dict__
 
     def __validate_options__(self, k, v, ov):
-        if ov == NotImplemented: 
+        if ov == NotImplemented:
             raise OptionTypeError("Option Type Currently Not Supported: %s" % k)
         if isinstance(v,dict) and isinstance(ov,dict):
             keys = v.keys()
-            if len(keys) > 1: 
+            if len(keys) > 1:
                 raise NotImplementedError
             return isinstance(v[keys[0]],ov[keys[0]])
-        return isinstance(v, ov) 
+        return isinstance(v, ov)
 
     def update_dict(self, **kwargs):
-        for k, v in kwargs.items(): 
+        for k, v in kwargs.items():
             if k in self.ALLOWED_OPTIONS:
                 # if isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), SeriesOptions):
                 if k in PlotOptions.ALLOWED_OPTIONS.keys():
@@ -43,8 +43,8 @@ class BaseOptions(object):
                         self.__dict__.update({k:v})
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and isinstance(self.ALLOWED_OPTIONS[k][0](), CommonObject):
-                    if isinstance(v, dict): 
-                        if self.__getattr__(k): 
+                    if isinstance(v, dict):
+                        if self.__getattr__(k):
                             self.__dict__[k].update(v) #update dict
                         else: # first
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
@@ -59,9 +59,9 @@ class BaseOptions(object):
                             for item in v:
                                 self.__dict__[k].update(item) # update array
                         else:
-                            OptionTypeError("Not An Accepted Input Type: %s, must be list or dictionary" 
-                                            % type(v))          
-                    else: #first 
+                            OptionTypeError("Not An Accepted Input Type: %s, must be list or dictionary"
+                                            % type(v))
+                    else: #first
                         if isinstance(v, dict):
                             self.__dict__.update({k:self.ALLOWED_OPTIONS[k][0](**v)})
                         elif isinstance(v, list):
@@ -77,10 +77,10 @@ class BaseOptions(object):
 
                 elif isinstance(self.ALLOWED_OPTIONS[k], tuple) and \
                     (isinstance(self.ALLOWED_OPTIONS[k][0](), CSSObject) or isinstance(self.ALLOWED_OPTIONS[k][0](), SVGObject)):
-                    if self.__getattr__(k): 
-                        for key, value in v.items(): # check if v has object input 
+                    if self.__getattr__(k):
+                        for key, value in v.items(): # check if v has object input
                             self.__dict__[k].__options__().update({key:value})
-                        
+
                         v = self.__dict__[k].__options__()
                     # upating object
                     if isinstance(v, dict):
@@ -129,7 +129,7 @@ class ChartOptions(BaseOptions):
         "marginLeft": int,
         "marginRight": int,
         "marginTop": int,
-        "options3d": (Options3d, dict), 
+        "options3d": (Options3d, dict),
         "plotBackgroundColor": (ColorObject, basestring, dict),
         "plotBackgroundImage": basestring,
         "plotBorderColor": (ColorObject, basestring, dict),
@@ -221,7 +221,7 @@ class CreditsOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "enabled": bool,
         "href": basestring,
-        "position": (Position, dict), 
+        "position": (Position, dict),
         "style": (CSSObject, dict),
         "text": basestring,
     }
@@ -231,7 +231,7 @@ class DrilldownOptions(BaseOptions): #not implement yet, need work in jinjia
     ALLOWED_OPTIONS = {
         "activeAxisLabelStyle": (CSSObject, dict),
         "activeDataLabelStyle": (CSSObject, dict),
-        "animation": NotImplemented, #(bool, dict), #not sure how to implement 
+        "animation": NotImplemented, #(bool, dict), #not sure how to implement
         "drillUpButton": (DrillUpButton, dict),
         "series": (SeriesOptions, dict),
     }
@@ -240,7 +240,7 @@ class DrilldownOptions(BaseOptions): #not implement yet, need work in jinjia
 class ExportingOptions(BaseOptions):
     ALLOWED_OPTIONS = {
         "buttons": (ContextButton, dict),
-        "chartOptions": (ChartOptions, dict), 
+        "chartOptions": (ChartOptions, dict),
         "enabled": bool,
         "filename": basestring,
         "formAttributes": NotImplemented,
@@ -456,7 +456,7 @@ class xAxisOptions(BaseOptions):
         "categories": list,
         'crosshair': bool,
         "dateTimeLabelFormats": (DateTimeLabelFormats, dict),
-        "endOnTick": bool, 
+        "endOnTick": bool,
         "events": (Events, dict),
         "gridLineColor": (ColorObject, basestring, dict),
         "gridLineDashStyle": basestring,
@@ -569,7 +569,9 @@ class yAxisOptions(BaseOptions):
         "tickmarkPlacement": basestring,
         "title": (Title, dict),
         "type": basestring,
-        "units": list    
+        "top": basestring,
+        "height": basestring,
+        "units": list
     }
 
 class zAxisOptions(BaseOptions): #only for 3D plots
@@ -635,7 +637,7 @@ class zAxisOptions(BaseOptions): #only for 3D plots
         "tickmarkPlacement": basestring,
         "title": (Title, dict),
         "type": basestring,
-        "units": list    
+        "units": list
     }
 
 
@@ -651,7 +653,6 @@ class MultiAxis(object):
 
     def update(self, **kwargs):
         self.axis.append(self.AxisObj(**kwargs))
-        
+
     def __jsonable__(self):
         return self.axis
-
